@@ -1,24 +1,11 @@
-name: Build Docker
+FROM 420michealtownley/gdrivvve:latest
 
-on:
-  push:
-   branches: [ master ]
-  pull_request:
-    branches: [ master ]
-      
-jobs:
-  build:
+WORKDIR /usr/src/app
+RUN chmod 777 /usr/src/app
 
-    runs-on: ubuntu-latest
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKERPW }}
-    - name: Building docker
-      run: docker image build -t "${{ secrets.DOCKER_HUB_USERNAME }}"/gdrivvve:latest .
-    - name: Pushing docker to docker.io
-      run: docker push "${{ secrets.DOCKER_HUB_USERNAME }}"/gdrivvve:latest
+COPY . .
+
+CMD ["bash", "start.sh"]
